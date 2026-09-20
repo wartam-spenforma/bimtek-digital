@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bimtek Digitalisasi Pembelajaran</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --surface:#ffffff;
+    --surface-2:#eef2f1;
+    --line:#c9d4d3;
+    --text:#132a33;
+    --muted:#4d6a72;
+    --accent:#0f7b6c;
+    --accent-ink:#ffffff;
+    --signal:#e0733b;
+    --radius:10px;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+    background:var(--surface-2);
+    color-scheme:light dark;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --surface:#12242c;
+      --surface-2:#0b171d;
+      --line:#2b454f;
+      --text:#e4eeee;
+      --muted:#9ab1b6;
+      --accent:#3fd0b4;
+      --accent-ink:#06211c;
+      --signal:#f0955e;
+    }
+  }
+  :root[data-theme="dark"]{
+    --surface:#12242c;
+    --surface-2:#0b171d;
+    --line:#2b454f;
+    --text:#e4eeee;
+    --muted:#9ab1b6;
+    --accent:#3fd0b4;
+    --accent-ink:#06211c;
+    --signal:#f0955e;
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  html{scroll-padding-top:env(safe-area-inset-top,0px)}
+  body{
+    margin:0;
+    background:var(--surface-2);
+    color:var(--text);
+    font-family:"Archivo","Helvetica Neue",Arial,sans-serif;
+    font-size:16px;line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:880px;margin:0 auto;padding:40px 20px 56px}
+
+  header h1{margin:0 0 6px;font-size:clamp(28px,6vw,44px);font-weight:700;letter-spacing:-.02em;line-height:1.05}
+  header p{margin:0;color:var(--muted);max-width:58ch}
+
+  .panel{
+    margin-top:28px;background:var(--surface);
+    border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
+  }
+
+  /* ---------- roda tombol ---------- */
+  .wheel-wrap{position:relative;width:min(92vw,420px);height:min(92vw,420px);margin:26px auto 8px}
+  .big-circle{
+    position:absolute;inset:6%;border-radius:50%;
+    background:var(--surface-2);border:1px solid var(--line);
+  }
+  .ring{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
+  .ring circle{fill:none;stroke-width:2}
+  .ring .bg{stroke:var(--line)}
+  .ring .fg{stroke:var(--signal);stroke-linecap:round;transition:stroke-dashoffset .4s cubic-bezier(.22,.61,.36,1)}
+  .track{position:absolute;inset:0}
+
+  .slide-btn{
+    position:absolute;top:0;left:0;
+    display:flex;align-items:center;justify-content:center;text-align:center;
+    border-radius:50%;
+    padding:6px;
+    border:1px solid var(--line);
+    background:var(--surface);color:var(--text);
+    font:inherit;font-size:14px;line-height:1.15;font-weight:600;cursor:pointer;
+    overflow:hidden;isolation:isolate;
+    transition:transform .22s cubic-bezier(.34,1.56,.64,1), border-color .22s ease, box-shadow .22s ease, color .22s ease, left .4s cubic-bezier(.22,.61,.36,1), top .4s cubic-bezier(.22,.61,.36,1);
+    /* masuk bertahap saat halaman dibuka */
+    animation:masuk .5s cubic-bezier(.22,.61,.36,1) backwards;
+    animation-delay:calc(var(--i) * 70ms);
+  }
+  /* sapuan warna melingkar saat disorot */
+  .slide-btn::before{
+    content:"";position:absolute;inset:0;z-index:-1;
+    background:var(--accent);border-radius:50%;
+    transform:scale(0);transition:transform .28s cubic-bezier(.22,.61,.36,1);
+  }
+  .slide-btn:hover{transform:scale(1.12);border-color:var(--accent);box-shadow:0 6px 14px rgba(15,123,108,.18);color:var(--accent-ink)}
+  .slide-btn:hover::before{transform:scale(1)}
+  .slide-btn:active{transform:scale(1.03)}
+  .slide-btn[aria-selected="true"]{
+    border-color:var(--accent);color:var(--accent-ink);
+    animation:pilih .42s cubic-bezier(.34,1.56,.64,1);
+  }
+  .slide-btn[aria-selected="true"]::before{transform:scale(1)}
+
+  .slide-btn.cv{border-color:var(--signal);color:var(--signal)}
+  .slide-btn.cv::before{background:var(--signal)}
+  .slide-btn.cv:hover,.slide-btn.cv[aria-selected="true"]{color:#fff;border-color:var(--signal);box-shadow:0 6px 14px rgba(224,115,59,.25)}
+
+  .slide-btn.info{
+    z-index:2;font-weight:700;letter-spacing:.02em;
+    border-color:var(--muted);color:var(--muted);
+    box-shadow:0 4px 10px rgba(0,0,0,.06);
+  }
+  .slide-btn.info::before{background:var(--muted)}
+  .slide-btn.info:hover,.slide-btn.info[aria-selected="true"]{color:var(--surface);border-color:var(--muted);box-shadow:0 6px 16px rgba(77,106,114,.28)}
+
+
+  /* ---------- isi ---------- */
+  .stage{padding:26px 20px 30px;min-height:210px}
+  .stage > *{animation:naik .38s ease backwards}
+  .stage > *:nth-child(2){animation-delay:60ms}
+  .stage > *:nth-child(3){animation-delay:110ms}
+  .stage .no{color:var(--signal);font-weight:600;font-size:14px;margin:0 0 4px}
+  .stage h2{margin:0 0 8px;font-size:24px;font-weight:600;letter-spacing:-.01em}
+  .stage .isi{margin:0;color:var(--muted);max-width:60ch}
+  .stage ul{margin:10px 0 0;padding-left:18px;color:var(--muted);max-width:60ch}
+  .stage li{margin:3px 0}
+  .buka-tautan{
+    display:inline-flex;align-items:center;gap:8px;
+    margin-top:18px;padding:11px 18px;
+    background:var(--accent);color:var(--accent-ink);
+    border-radius:var(--radius);text-decoration:none;
+    font-weight:600;font-size:15px;
+    transition:transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s ease;
+  }
+  .buka-tautan::after{content:"↗";font-weight:700}
+  .buka-tautan:hover{transform:translateY(-2px);box-shadow:0 8px 16px rgba(15,123,108,.28)}
+  .buka-tautan:active{transform:translateY(0) scale(.97)}
+
+  /* ---------- kontrol ---------- */
+  .controls{display:flex;flex-wrap:wrap;gap:10px;padding:16px 20px 20px;border-top:1px solid var(--line)}
+  .ctrl{
+    position:relative;flex:1 1 150px;
+    padding:12px 14px;
+    border:1px solid var(--line);border-radius:var(--radius);
+    background:transparent;color:var(--text);
+    font:inherit;font-weight:500;cursor:pointer;overflow:hidden;isolation:isolate;
+    transition:transform .2s cubic-bezier(.34,1.56,.64,1), border-color .2s ease, color .2s ease;
+    animation:masuk .5s cubic-bezier(.22,.61,.36,1) backwards;
+    animation-delay:calc(560ms + var(--i) * 70ms);
+  }
+  .ctrl::before{
+    content:"";position:absolute;inset:0;z-index:-1;background:var(--accent);
+    transform:translateY(101%);transition:transform .26s cubic-bezier(.22,.61,.36,1);
+  }
+  .ctrl:hover:not(:disabled){transform:translateY(-3px);border-color:var(--accent);color:var(--accent-ink)}
+  .ctrl:hover:not(:disabled)::before{transform:translateY(0)}
+  .ctrl:active:not(:disabled){transform:scale(.97)}
+  .ctrl:disabled{opacity:.4;cursor:not-allowed}
+  .ctrl[data-on="true"]{background:var(--signal);border-color:var(--signal);color:#fff;animation:denyut 1.8s ease-in-out infinite}
+  .ctrl[data-on="true"]::before{display:none}
+
+  button:focus-visible{outline:3px solid var(--signal);outline-offset:2px}
+  footer{margin-top:18px;color:var(--muted);font-size:14px}
+
+  @keyframes masuk{from{opacity:0;transform:translateY(12px) scale(.94)}to{opacity:1;transform:none}}
+  @keyframes naik{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  @keyframes pilih{0%{transform:scale(1)}45%{transform:scale(1.07)}100%{transform:scale(1)}}
+  @keyframes denyut{0%,100%{box-shadow:0 0 0 0 rgba(224,115,59,.45)}50%{box-shadow:0 0 0 8px rgba(224,115,59,0)}}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important}
+    .track,.ring .fg,.slide-btn,.ctrl,.slide-btn::before,.ctrl::before{transition:none}
+    .slide-btn:hover,.ctrl:hover:not(:disabled){transform:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Bimtek Digitalisasi Pembelajaran</h1>
+  </header>
+
+  <main class="panel">
+
+    <div class="wheel-wrap">
+      <div class="big-circle" aria-hidden="true"></div>
+      <svg class="ring" viewBox="0 0 300 300" aria-hidden="true">
+        <circle class="bg" cx="150" cy="150" r="140"></circle>
+        <circle class="fg" id="ringFg" cx="150" cy="150" r="140"></circle>
+      </svg>
+      <div class="track" id="track" role="tablist" aria-label="Daftar slide"></div>
+    </div>
+
+    <section class="stage" id="stage" role="tabpanel" aria-live="polite"></section>
+
+    <div class="controls">
+      <button class="ctrl" id="prev" type="button" style="--i:0">Sebelumnya</button>
+      <button class="ctrl" id="next" type="button" style="--i:1">Berikutnya</button>
+      <button class="ctrl" id="auto" type="button" data-on="false" aria-pressed="false" style="--i:2">Putar otomatis</button>
+      <button class="ctrl" id="reset" type="button" style="--i:3">Kembali ke awal</button>
+    </div>
+
+  </main>
+
+  <footer>Gunakan tombol panah kiri dan kanan untuk berpindah.</footer>
+
+</div>
+
+<script>
+(function(){
+  const INFO = {
+    label:"Informasi",
+    judul:"Roundown Acara",
+    daftar:[
+      "Registrasi — 07.00 – 07.30",
+      "Sesi 1 (Pretes) — 07.30 – 08.00",
+      "Sesi 2 — 08.00 – 09.00",
+      "Sesi 3 — 09.15 – 10.15",
+      "Sesi 4 — 10.15 – 11.15",
+      "Sesi 5 — 11.15 – 12.15",
+      "Sesi 6 — 13.15 – 14.15",
+      "Sesi 7 — 14.15 – 15.15",
+      "Presentasi — 15.30 – 16.30",
+      "RTL dan Postes — 16.30 – 17.00"
+    ]
+  };
+  const CV = {
+    label:"CV",
+    kapsi:"Profil singkat",
+    judul:"Curriculum vitae",
+    teks:"Ringkasan diri, pengalaman, dan keahlian. Ganti isinya lewat objek CV di dalam berkas ini.",
+    daftar:["Nama dan posisi saat ini","Pendidikan terakhir","Dua sampai tiga pengalaman kerja","Keahlian utama dan kontak"]
+  };
+  const SLIDES = [
+    { judul:"Paradigma Pembelajaran Digital dan Pemanfaatan Perangkat",
+      teks:"Pergeseran cara mengajar di ruang kelas digital dan posisi perangkat sebagai alat bantu, bukan tujuan.",
+      tautan:"https://docs.google.com/presentation/d/1i_hRQq0lLxQrPorFJJQOKEuPCUi0vR9EZU4Z0ZMnTVM/edit?usp=drivesdk" },
+    { judul:"Pengenalan Fitur dan Pengoperasian Dasar Perangkat Digital",
+      teks:"Mengenali fitur utama perangkat serta langkah dasar mengoperasikannya sebelum dipakai mengajar.",
+      tautan:"https://docs.google.com/presentation/d/1YTDMyNmHIemwoG6Df1shuttb9SRGKJiys032FXSY1wk/edit?usp=drivesdk" },
+    { judul:"Perancangan MPI dan Pemanfaatan Ruang Murid",
+      teks:"Menyusun Multimedia Pembelajaran Interaktif dan memanfaatkan Ruang Murid untuk kegiatan belajar.",
+      tautan:"https://docs.google.com/presentation/d/1idhAhG5oINUdxftM2Yrb-kWg10NdqA3akpMRk4p5AmM/edit?usp=drivesdk" },
+    { judul:"KKA Digitalisasi Pembelajaran Litnum",
+      teks:"Kertas Kerja Aksi digitalisasi pembelajaran literasi dan numerasi beserta cara pengisiannya.",
+      tautan:"https://docs.google.com/presentation/d/1BKaVQYrVHm2gjWAKqdKHCLPzgTAwjYVGDuTZta40HIU/edit?usp=drivesdk" },
+    { judul:"Perencanaan Pembelajaran",
+      teks:"Menuangkan seluruh materi sebelumnya ke dalam rencana pembelajaran yang siap dipakai di kelas.",
+      tautan:"https://docs.google.com/presentation/d/1b3-1iGR9xHp9OLV4z1g3cZvJwS4UOL9wqNGtSlmbb4g/edit?usp=drivesdk" }
+  ];
+  const ITEMS = [INFO, CV].concat(SLIDES.map((s,i)=>({
+    label:"Slide "+(i+1), kapsi:"Slide "+(i+1)+" dari "+SLIDES.length, judul:s.judul, teks:s.teks, tautan:s.tautan
+  })));
+
+  const track = document.getElementById('track');
+  const stage = document.getElementById('stage');
+  const ringFg = document.getElementById('ringFg');
+  const wrapEl = document.querySelector('.wheel-wrap');
+  const prev  = document.getElementById('prev');
+  const next  = document.getElementById('next');
+  const auto  = document.getElementById('auto');
+  const reset = document.getElementById('reset');
+
+  let aktif = 0, timer = null;
+  const RING_R = 140, RING_C = 2 * Math.PI * RING_R;
+  ringFg.style.strokeDasharray = RING_C;
+
+  const buttons = ITEMS.map((it,i)=>{
+    const b = document.createElement('button');
+    b.type='button';
+    b.className = 'slide-btn' + (i===0 ? ' info' : i===1 ? ' cv' : '');
+    b.setAttribute('role','tab');
+    b.style.setProperty('--i', i);
+    b.textContent = it.label;
+    b.setAttribute('aria-selected', i===0 ? 'true':'false');
+    b.addEventListener('click', ()=>{ hentikan(); pilih(i); });
+    track.appendChild(b);
+    return b;
+  });
+
+  function ukur(){
+    const size = wrapEl.clientWidth;
+    const center = size / 2;
+    const radius = size * (RING_R / 300);
+    const btnSize = Math.max(58, Math.min(88, size * 0.24));
+    const centerBtnSize = Math.max(76, Math.min(112, size * 0.32));
+    const tepi = buttons.slice(1); /* CV + Slide 1-5, di tepi lingkaran */
+    const n = tepi.length;
+
+    /* tombol Informasi di pusat */
+    const info = buttons[0];
+    info.style.width = centerBtnSize + 'px';
+    info.style.height = centerBtnSize + 'px';
+    info.style.left = (center - centerBtnSize/2) + 'px';
+    info.style.top  = (center - centerBtnSize/2) + 'px';
+
+    tepi.forEach((b,i)=>{
+      const angle = (2 * Math.PI * i / n) - Math.PI / 2;
+      const x = center + radius * Math.cos(angle);
+      const y = center + radius * Math.sin(angle);
+      b.style.width = btnSize + 'px';
+      b.style.height = btnSize + 'px';
+      b.style.left = (x - btnSize/2) + 'px';
+      b.style.top  = (y - btnSize/2) + 'px';
+    });
+  }
+
+  function pilih(i){
+    aktif = (i + ITEMS.length) % ITEMS.length;
+    const it = ITEMS[aktif];
+    buttons.forEach((b,k)=>{
+      b.setAttribute('aria-selected', k===aktif ? 'true':'false');
+      if (k===aktif){ b.style.animation='none'; void b.offsetWidth; b.style.animation=''; }
+    });
+
+    stage.innerHTML = '';
+    if (it.kapsi){ const kapsi = document.createElement('p'); kapsi.className='no'; kapsi.textContent = it.kapsi; stage.appendChild(kapsi); }
+    const judul = document.createElement('h2'); judul.textContent = it.judul; stage.appendChild(judul);
+    if (it.teks){ const teks = document.createElement('p'); teks.className='isi'; teks.textContent = it.teks; stage.appendChild(teks); }
+    if (it.daftar){
+      const ul = document.createElement('ul');
+      it.daftar.forEach(d=>{ const li=document.createElement('li'); li.textContent=d; ul.appendChild(li); });
+      stage.appendChild(ul);
+    }
+    if (it.tautan){
+      const a = document.createElement('a');
+      a.href = it.tautan; a.target='_blank'; a.rel='noopener noreferrer';
+      a.className='buka-tautan'; a.textContent='Buka slide di Google Slides';
+      stage.appendChild(a);
+    }
+
+    ringFg.style.strokeDashoffset = RING_C - ((aktif+1) / ITEMS.length) * RING_C;
+    prev.disabled = aktif === 0;
+    next.disabled = aktif === ITEMS.length - 1;
+    reset.disabled = aktif === 0;
+  }
+
+  function hentikan(){
+    if (!timer) return;
+    clearInterval(timer); timer = null;
+    auto.dataset.on='false'; auto.setAttribute('aria-pressed','false');
+    auto.textContent='Putar otomatis';
+  }
+
+  auto.addEventListener('click', ()=>{
+    if (timer) return hentikan();
+    auto.dataset.on='true'; auto.setAttribute('aria-pressed','true');
+    auto.textContent='Jeda';
+    timer = setInterval(()=> pilih(aktif+1), 2600);
+  });
+  prev.addEventListener('click', ()=>{ hentikan(); pilih(aktif-1); });
+  next.addEventListener('click', ()=>{ hentikan(); pilih(aktif+1); });
+  reset.addEventListener('click', ()=>{ hentikan(); pilih(0); });
+
+  document.addEventListener('keydown', e=>{
+    if (e.key === 'ArrowRight'){ hentikan(); pilih(aktif+1); }
+    if (e.key === 'ArrowLeft'){ hentikan(); pilih(aktif-1); }
+  });
+
+  window.addEventListener('resize', ukur);
+  ukur(); pilih(0);
+})();
+</script>
+</body>
+</html>
