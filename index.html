@@ -90,6 +90,23 @@
   .ring .fg{stroke:var(--signal);stroke-linecap:round;transition:stroke-dashoffset .4s cubic-bezier(.22,.61,.36,1)}
   .track{position:absolute;inset:0}
 
+  .center-links{
+    position:absolute;left:50%;top:50%;z-index:3;
+    display:flex;gap:5px;justify-content:center;
+    transform:translate(-50%,34px);
+    width:210px;
+  }
+  .center-links a{
+    display:flex;align-items:center;justify-content:center;
+    min-width:64px;min-height:34px;padding:5px 7px;
+    border:1px solid var(--accent);border-radius:9px;
+    background:var(--surface);color:var(--accent);
+    font:inherit;font-size:11px;font-weight:700;text-decoration:none;
+    box-shadow:0 3px 9px rgba(15,123,108,.14);
+    transition:transform .2s ease,background .2s ease,color .2s ease;
+  }
+  .center-links a:hover{transform:translateY(-3px);background:var(--accent);color:var(--accent-ink)}
+
   .slide-btn{
     position:absolute;top:0;left:0;
     display:flex;align-items:center;justify-content:center;text-align:center;
@@ -210,6 +227,11 @@
         <circle class="fg" id="ringFg" cx="150" cy="150" r="140"></circle>
       </svg>
       <div class="track" id="track" role="tablist" aria-label="Daftar slide"></div>
+      <nav class="center-links" aria-label="Tautan utama">
+        <a href="https://dinasdikbudcilacap.github.io/boskin-cilacap-2026/" target="_blank" rel="noopener noreferrer">Bimtek</a>
+        <a href="https://pmp.bbpmpjateng.id/login" target="_blank" rel="noopener noreferrer">Orbit</a>
+        <a href="https://docs.google.com/presentation/d/1ZyTRH2jrNb1p6pDSOpWGEcj_XDrJ7j7gM5jNtSxrUwg/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Lain-lain</a>
+      </nav>
     </div>
 
     <section class="stage" id="stage" role="tabpanel" aria-live="polite"></section>
@@ -230,7 +252,7 @@
 <script>
 (function(){
   const INFO = {
-    label:"Informasi",
+    label:"Acara",
     judul:"Rundown Acara",
     daftar:[
       "Registrasi — 07.00 – 07.30",
@@ -256,7 +278,7 @@
       "Unit Kerja: SMP Negeri 4 Majenang",
       "Pendidikan terakhir: S1 Pendidikan Matematika",
       "Pengalaman Kerja: SMP Negeri 1 Kampung Laut (2003–2026), SMA Muhammadiyah Majenang (2003–2006), SMP Negeri 4 Majenang (2006–sekarang)",
-      "Kompetensi: GCT L1 dan L2, Guru Penggerak, Bergema, Guru Pejuang Digital"
+      "Kompetensi: GCT L1 dan L2, Guru Penggerak, Bergema, GC Gemini 2025, Guru Pejuang Digital"
     ]
   };
   const SLIDES = [
@@ -320,7 +342,7 @@
     info.style.width = centerBtnSize + 'px';
     info.style.height = centerBtnSize + 'px';
     info.style.left = (center - centerBtnSize/2) + 'px';
-    info.style.top  = (center - centerBtnSize/2) + 'px';
+    info.style.top  = (center - centerBtnSize/2 - 28) + 'px';
 
     tepi.forEach((b,i)=>{
       const angle = (2 * Math.PI * i / n) - Math.PI / 2;
