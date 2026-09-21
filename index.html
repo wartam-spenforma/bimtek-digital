@@ -50,24 +50,36 @@
   html{scroll-padding-top:env(safe-area-inset-top,0px)}
   body{
     margin:0;
-    background:var(--surface-2);
+    background:linear-gradient(120deg,#38d9c0,#ffd166,#ff6b6b,#6c63ff,#38d9c0);
+    background-size:300% 300%;
     color:var(--text);
     font-family:"Archivo","Helvetica Neue",Arial,sans-serif;
     font-size:16px;line-height:1.55;
     -webkit-font-smoothing:antialiased;
+    animation:warnaLatar 18s ease-in-out infinite;
   }
   .wrap{max-width:880px;margin:0 auto;padding:40px 20px 56px}
 
-  header h1{margin:0 0 6px;font-size:clamp(28px,6vw,44px);font-weight:700;letter-spacing:-.02em;line-height:1.05}
+  header{text-align:center}
+  header h1{
+    margin:0 0 6px;font-size:clamp(28px,6vw,44px);font-weight:700;
+    letter-spacing:-.02em;line-height:1.05;
+    background:linear-gradient(90deg,var(--accent),var(--signal),var(--accent));
+    background-size:220% auto;
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    animation:warnaJudul 6s linear infinite;
+  }
   header p{margin:0;color:var(--muted);max-width:58ch}
 
   .panel{
     margin-top:28px;background:var(--surface);
     border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
+    box-shadow:0 12px 30px rgba(19,42,51,.09);
+    animation:naik 700ms ease both;
   }
 
   /* ---------- roda tombol ---------- */
-  .wheel-wrap{position:relative;width:min(92vw,420px);height:min(92vw,420px);margin:26px auto 8px}
+  .wheel-wrap{position:relative;width:min(92vw,420px);height:min(92vw,420px);margin:50px auto 8px}
   .big-circle{
     position:absolute;inset:6%;border-radius:50%;
     background:var(--surface-2);border:1px solid var(--line);
@@ -170,6 +182,8 @@
 
   @keyframes masuk{from{opacity:0;transform:translateY(12px) scale(.94)}to{opacity:1;transform:none}}
   @keyframes naik{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  @keyframes warnaLatar{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+  @keyframes warnaJudul{to{background-position:220% center}}
   @keyframes pilih{0%{transform:scale(1)}45%{transform:scale(1.07)}100%{transform:scale(1)}}
   @keyframes denyut{0%,100%{box-shadow:0 0 0 0 rgba(224,115,59,.45)}50%{box-shadow:0 0 0 8px rgba(224,115,59,0)}}
 
@@ -217,7 +231,7 @@
 (function(){
   const INFO = {
     label:"Informasi",
-    judul:"Roundown Acara",
+    judul:"Rundown Acara",
     daftar:[
       "Registrasi — 07.00 – 07.30",
       "Sesi 1 (Pretes) — 07.30 – 08.00",
@@ -235,8 +249,15 @@
     label:"CV",
     kapsi:"Profil singkat",
     judul:"Curriculum vitae",
-    teks:"Ringkasan diri, pengalaman, dan keahlian. Ganti isinya lewat objek CV di dalam berkas ini.",
-    daftar:["Nama dan posisi saat ini","Pendidikan terakhir","Dua sampai tiga pengalaman kerja","Keahlian utama dan kontak"]
+    teks:"Profil Wartam, pendidik pada SMP Negeri 4 Majenang.",
+    daftar:[
+      "Nama: Wartam",
+      "Tempat tanggal lahir: Cilacap, 4 Juli 1974",
+      "Unit Kerja: SMP Negeri 4 Majenang",
+      "Pendidikan terakhir: S1 Pendidikan Matematika",
+      "Pengalaman Kerja: SMP Negeri 1 Kampung Laut (2003–2026), SMA Muhammadiyah Majenang (2003–2006), SMP Negeri 4 Majenang (2006–sekarang)",
+      "Kompetensi: GCT L1 dan L2, Guru Penggerak, Bergema, Guru Pejuang Digital"
+    ]
   };
   const SLIDES = [
     { judul:"Paradigma Pembelajaran Digital dan Pemanfaatan Perangkat",
